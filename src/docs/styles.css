@@ -1,0 +1,13 @@
+
+.demo-block {
+  padding: 40px 0px;
+}
+
+.demo {
+  height: 400px;
+}
+.code {
+  overflow-y: scroll;
+  font-family: monospace;
+  font-size: 15px;
+}

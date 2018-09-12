@@ -21,6 +21,7 @@ class ArraySource extends Component {
 									this.setState({ xAxisVisible: JSON.parse(value) });
 								}}
 								value={this.state.xAxisVisible}
+								key={"xAxisVisible"}
 								title={"xAxisVisible"}
 							/>
                             <LabeledEditText
@@ -29,6 +30,7 @@ class ArraySource extends Component {
 									this.setState({ yAxisVisible: JSON.parse(value) });
 								}}
 								value={this.state.yAxisVisible}
+								key={"yAxisVisible"}
 								title={"yAxisVisible"}
 							/>
                             <LabeledEditText
@@ -37,6 +39,7 @@ class ArraySource extends Component {
 									this.setState({ horizontalGrid: JSON.parse(value) });
 								}}
 								value={this.state.horizontalGrid}
+								key={"horizontalGrid"}
 								title={"horizontalGrid"}
 							/>
                             <LabeledEditText
@@ -45,6 +48,7 @@ class ArraySource extends Component {
 									this.setState({ verticalGrid: JSON.parse(value) });
 								}}
 								value={this.state.verticalGrid}
+								key={"verticalGrid"}
 								title={"verticalGrid"}
 							/>
 							<LabeledEditText
@@ -52,6 +56,7 @@ class ArraySource extends Component {
 									this.setState({ tickAngle: value });
 								}}
 								value={this.state.tickAngle}
+								key={"tickAngle"}
 								title={"tickAngle"}
 								number
 							/>
@@ -63,6 +68,7 @@ class ArraySource extends Component {
 									this.setState({ label: value });
 								}}
 								value={this.state.label}
+								key={"label"}
 								title={"label"}
 							/>
 							<LabeledEditText
@@ -71,6 +77,7 @@ class ArraySource extends Component {
 									this.setState({ type: value });
 								}}
 								value={this.state.type}
+								key={"type"}
 								title={"type"}
 							/>
 							<LabeledEditText
@@ -78,6 +85,7 @@ class ArraySource extends Component {
 									this.setState({ color: value });
 								}}
 								value={this.state.color}
+								key={"color"}
 								title={"color"}
 							/>
 							<LabeledEditText
@@ -85,6 +93,7 @@ class ArraySource extends Component {
 									this.setState({ width: value });
 								}}
 								value={this.state.width}
+								key={"width"}
 								title={"width"}
 								number
 							/>
@@ -93,6 +102,7 @@ class ArraySource extends Component {
 									this.setState({ dash: value });
 								}}
 								value={this.state.dash}
+								key={"dash"}
 								title={"dash"}
 								number
 							/>
@@ -101,6 +111,7 @@ class ArraySource extends Component {
 									this.setState({ size: value });
 								}}
 								value={this.state.size}
+								key={"size"}
 								title={"size"}
 								number
 							/>
@@ -109,6 +120,7 @@ class ArraySource extends Component {
 									this.setState({ scale: value });
 								}}
 								value={this.state.scale}
+								key={"scale"}
 								title={"scale"}
 								number
 							/>
@@ -117,6 +129,7 @@ class ArraySource extends Component {
 									this.setState({ offset: value });
 								}}
 								value={this.state.offset}
+								key={"offset"}
 								title={"offset"}
 								number
 							/>
@@ -126,6 +139,7 @@ class ArraySource extends Component {
 									this.setState({ visible: JSON.parse(value) });
 								}}
 								value={this.state.visible}
+								key={"visible"}
 								title={"visible"}
 							/>
 						</div>

@@ -24,7 +24,7 @@ class LabeledEditText extends Component {
 						}}
 					>
 						{this.props.options.map(x => {
-							return <option value={x}>{JSON.stringify(x)}</option>;
+							return <option key={x} value={x}>{JSON.stringify(x)}</option>;
 						})}
 					</select>
 				) : (

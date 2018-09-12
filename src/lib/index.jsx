@@ -228,6 +228,12 @@ class ThyboltChart extends Component {
 		this.stale = true;
 	};
 
+	closeEditor = () => {
+		this.setState({ settingsVisible: false });
+		this.forceUpdate();
+		this.stale = true;
+	}
+
 	data = [];
 	charts = [];
 	labels = [];
@@ -331,11 +337,7 @@ class ThyboltChart extends Component {
 						<GraphSource
 							{...this.props}
 							
-							closeEditor={() => {
-								this.setState({ settingsVisible: false });
-								this.forceUpdate();
-								this.stale = true;
-							}}
+							closeEditor={this.closeEditor}
 						/>
 					)}
 					<div className="graphControl">
@@ -415,7 +417,7 @@ class ThyboltChart extends Component {
 									height: "inherit"
 								}}
 							>
-								<FlexibleXYPlot onWheel={this.handleWheel} onMouseLeave={this.onMouseLeave}>
+								<FlexibleXYPlot onClick={this.closeEditor} onWheel={this.handleWheel} onMouseLeave={this.onMouseLeave}>
 									{this.props.descriptor.x.horizontalGrid !== false && <HorizontalGridLines />}
 									{this.props.descriptor.x.verticalGrid !== false && <VerticalGridLines />}
 									{this.props.descriptor.x.yAxisVisible !== false && <YAxis />}
@@ -486,30 +488,5 @@ class ThyboltChart extends Component {
 	}
 }
 
-// ThyboltChart.propTypes = {
-// 	id: PropTypes.string,
-// 	updateAxis: PropTypes.func,
-// 	removeAxis: PropTypes.func,
-// 	addAxis: PropTypes.func,
-// 	meta: PropTypes.shape({
-// 		color: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-// 		dash: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-// 		label: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-// 		offset: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-// 		scale: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-// 		size: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-// 		source: PropTypes.shape({
-// 			x: PropTypes.string.isRequired,
-// 			y: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
-// 		}).isRequired,
-// 		title: PropTypes.string.isRequired,
-// 		type: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-// 		visible: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-// 		width: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
-// 	}).isRequired,
-// 	data: PropTypes.object,
-// 	color:PropTypes.string,
-// 	readonly: PropTypes.bool,
-// };
 
 export default ThyboltChart;

@@ -55,7 +55,6 @@ class GraphSource extends Component {
 				<div>
 					{this.props.data && (
 						<span>
-							<small>Prop Data</small>
 							<br />
 							{Object.keys(this.props.data).map(key => (
 								<span

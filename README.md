@@ -1,7 +1,5 @@
 # Thybolt-Chart 
 
-Version 0.1.0
-
 A wrapper around react-vis for rapid data visualization. 
 
 ![https://i.imgur.com/yxmS13F.png](https://i.imgur.com/yxmS13F.png)
@@ -65,6 +63,8 @@ Simply use the `data` prop to load data to chart. The `data` object will be avai
 
 ## Props
 
+* `readonly` - Self Explanatory
+* 
 * `meta` - The only required prop. meta expects an Object of the format 
   
     `{

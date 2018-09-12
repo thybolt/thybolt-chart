@@ -64,6 +64,7 @@
 .graphSource {
 	position: absolute;
 	opacity: 0.9;
+	border-radius: 4px;
 	z-index: 100;
 	background: white;
 	width: fit-content;

@@ -27,7 +27,6 @@ class ThyboltChart extends Component {
 	stale = true;
 	_xydata = [];
 	_xydataUnscaled = [];
-	refreshInterval = null;
 
 	typeToChart = {
 		line: LineMarkSeries,
@@ -48,85 +47,80 @@ class ThyboltChart extends Component {
 			legendHover: -1
 		};
 	}
-	componentDidMount = () => {
-		this.setState({ data: this.props.data });
-		this.graphUpdated();
-		this.refreshInterval = setInterval(() => {
-			if ((this.props.data?Object.keys(this.props.data).length:-1) > 0) this.graphUpdated();
-		}, 2000);
-	};
-
-	componentWillReceiveProps = nextprops => {
-		this.setState({ data: nextprops.data });
-	};
-
-	componentWillUnmount() {
-		clearInterval(this.refreshInterval);
-	}
 
 	seededRandom = id => Math.floor(Math.abs(Math.sin(4 + id) * 10000));
 
 	graphUpdated = () => {
-		if (this.props.descriptor) {
-			try {
-				let _tempx = new Function("data", this.props.descriptor.x.source)(this.state.data); //eval(`var data=${JSON.stringify(this.props.data)};${this.props.meta.source.x}`);
-				let _tempy = [];
-
-				for (let i = 0; i < this.props.descriptor.y.length; i++) {
-					_tempy.push(new Function("data", this.props.descriptor.y[i].source)(this.state.data));
-				}
-
-				this._xydata = [];
-				this._xydataUnscaled = [];
-				for (let i = 0; i < this.props.descriptor.y.length; i++) {
-					this._xydata.push([]);
-					this._xydataUnscaled.push([]);
-					let scale = parseFloat(this.props.descriptor.y[i].scale);
-					scale = scale ? scale : 1.0;
-					let offset = parseFloat(this.props.descriptor.y[i].offset);
-					offset = offset ? offset : 0.0;
-					for (let j = 0; j < _tempx.length; j++) {
-						// Y = a * X + B
-						let value = _tempy[i][j] * scale + offset;
-						let valueUnscaled = _tempy[i][j];
-
-						if (!value) value = _tempy[i][j];
-						// this._xydata[i].unshift({
-						// 	index:j,
-						// 	x0: _tempx[j] + parseFloat(this.props.descriptor.y[i].width) * 0.01,
-						// 	x: _tempx[j],
-						// 	y: value
-						// });
-						// this._xydataUnscaled[i].unshift({
-						// 	index:j,
-						// 	x: _tempx[j],
-						// 	y: valueUnscaled
-						// });
-						//We're going to use the index as a pseudo X
-						//The actual x will only be used for tickvalues
-						this._xydata[i].unshift({
-							xv: _tempx[j],
-							x0: j + parseFloat(this.props.descriptor.y[i].width) * 0.01,
-							x: j,
-							y: value
-						});
-						this._xydataUnscaled[i].unshift({
-							xv: _tempx[j],
-							x: j,
-							y: valueUnscaled
-						});
+		componentDidMount() {
+			if (this.props.descriptor) {
+				// setInterval(() => {
+					try {
+						let _tempx = new Function("data", this.props.descriptor.x.source)(this.props.data); //eval(`var data=${JSON.stringify(this.props.data)};${this.props.meta.source.x}`);
+						let _tempy = [];
+	
+						for (let i = 0; i < this.props.descriptor.y.length; i++) {
+							_tempy.push(new Function("data", this.props.descriptor.y[i].source)(this.props.data));
+						}
+	
+						this._xydata = [];
+						this._xydataUnscaled = [];
+						for (let i = 0; i < this.props.descriptor.y.length; i++) {
+							this._xydata.push([]);
+							this._xydataUnscaled.push([]);
+							let scale = parseFloat(this.props.descriptor.y[i].scale);
+							scale = scale ? scale : 1.0;
+							let offset = parseFloat(this.props.descriptor.y[i].offset);
+							offset = offset ? offset : 0.0;
+							for (let j = 0; j < _tempx.length; j++) {
+								// Y = a * X + B
+								let value = _tempy[i][j] * scale + offset;
+								let valueUnscaled = _tempy[i][j];
+	
+								if (!value) value = _tempy[i][j];
+								// this._xydata[i].unshift({
+								// 	index:j,
+								// 	x0: _tempx[j] + parseFloat(this.props.descriptor.y[i].width) * 0.01,
+								// 	x: _tempx[j],
+								// 	y: value
+								// });
+								// this._xydataUnscaled[i].unshift({
+								// 	index:j,
+								// 	x: _tempx[j],
+								// 	y: valueUnscaled
+								// });
+								//We're going to use the index as a pseudo X
+								//The actual x will only be used for tickvalues
+								this._xydata[i].unshift({
+									xv: _tempx[j],
+									x0: j + parseFloat(this.props.descriptor.y[i].width) * 0.01,
+									x: j,
+									y: value
+								});
+								this._xydataUnscaled[i].unshift({
+									xv: _tempx[j],
+									x: j,
+									y: valueUnscaled
+								});
+							}
+						}
+	
+						this.setState({ xydata: this._xydata, xydataUnscaled: this._xydataUnscaled });
+					} catch (error) {
+						console.log(error);
 					}
-				}
-
-				this.setState({ xydata: this._xydata, xydataUnscaled: this._xydataUnscaled });
-			} catch (error) {
-				console.log(error);
+				// }, 1000);
+			} else {
+				this.setState({ xydata: this.props.xydata });
 			}
-		} else {
-			this.setState({ xydata: this.props.xydata });
+			this.stale = true;
 		}
-		this.stale = true;
-	};
+	}
+
+	componentWillUpdate = () => {
+		this.graphUpdated()
+	}
+	componentDidMount = () => {this.graphUpdated()
+	}
 
 	toggleChart = () => {
 		this.setState({ graphMode: !this.state.graphMode });
@@ -274,23 +268,16 @@ class ThyboltChart extends Component {
 					if (this.state.legendHover != -1) {
 						if (this.state.legendHover != ch) color = "rgba(200,200,200,0.2)";
 					}
-
-					if (this.props.descriptor.y[ch].visible !== false && this.data[ch].length != 0) {
+					if (this.props.descriptor.y[ch].visible !== false) {
 						if (!this.props.descriptor.y[ch].type || this.props.descriptor.y[ch].type === "line")
 							this.charts.push(
 								<LineMarkSeries
 									key={this.props.descriptor.y[ch].label}
 									strokeDasharray={this.props.descriptor.y[ch].dash}
 									strokeWidth={
-										(!isNaN(parseFloat(this.props.descriptor.y[ch].width)))
-											? parseFloat(this.props.descriptor.y[ch].width)
-											: 2.0
+										this.props.descriptor.y[ch].width ? this.props.descriptor.y[ch].width : 2
 									}
-									size={
-										(this.props.descriptor.y[ch].size)
-											? (this.props.descriptor.y[ch].size)
-											: 0.0
-									}
+									size={this.props.descriptor.y[ch].size ? this.props.descriptor.y[ch].size : 0}
 									color={color}
 									animation={false}
 									getNull={d => d.y}
@@ -304,15 +291,9 @@ class ThyboltChart extends Component {
 									key={this.props.descriptor.y[ch].label}
 									strokeDasharray={this.props.descriptor.y[ch].dash}
 									strokeWidth={
-										(!isNaN(parseFloat(this.props.descriptor.y[ch].width)))
-											? parseFloat(this.props.descriptor.y[ch].width)
-											: 2.0
+										this.props.descriptor.y[ch].width ? this.props.descriptor.y[ch].width : 2
 									}
-									size={
-										parseFloat(this.props.descriptor.y[ch].size)
-											? parseFloat(this.props.descriptor.y[ch].size)
-											: 0.0
-									}
+									size={this.props.descriptor.y[ch].size ? this.props.descriptor.y[ch].size : 0}
 									color={color}
 									animation={false}
 									onNearestX={this.onNearestX}
@@ -330,7 +311,6 @@ class ThyboltChart extends Component {
 					{this.state.settingsVisible && (
 						<GraphSource
 							{...this.props}
-							
 							closeEditor={() => {
 								this.setState({ settingsVisible: false });
 								this.forceUpdate();
@@ -422,8 +402,6 @@ class ThyboltChart extends Component {
 									{this.props.descriptor.x.xAxisVisible !== false && (
 										<XAxis
 											//TODO: make custom ticks work
-											//This kinda works. but there is a large divergence in distance
-											//between real values and ticks.
 											// tickFormat={(value, index) =>
 											// 	this.data[0][this.data[0].length - index ]
 											// 		? this.data[0][this.data[0].length - index].xv
@@ -458,7 +436,7 @@ class ThyboltChart extends Component {
 										this.setState({ legendHover: -1 });
 										this.stale = true;
 									}}
-									items={this.props.descriptor.y.filter(y => y.visible !== false).map(y => {
+									items={this.props.descriptor.y.map(y => {
 										if (!y.color) return { title: y.label };
 										else return { title: y.label, color: y.color };
 									})}

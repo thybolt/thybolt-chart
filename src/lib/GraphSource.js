@@ -1,246 +1,72 @@
 import React, { Component } from "react";
-
-class LabeledEditText extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-	render() {
-		return (
-			<div style={{ marginRight: "20px" }}>
-				<div
-					style={{
-						fontSize: "10px",
-						opacity: 0.7
-					}}
-				>
-					{this.props.title}
-				</div>
-				{this.props.options ? (
-					<select
-						value={this.props.value}
-						onChange={e => {
-							this.props.onChange(e.target.value);
-						}}
-					>
-						{this.props.options.map(x => {
-							return <option value={x}>{x}</option>;
-						})}
-					</select>
-				) : (
-					<input
-						type={this.props.number ? "number" : "text"}
-						onChange={e => {
-							this.props.onChange(e.target.value);
-						}}
-						style={{ fontSize: "11px", border: "none", borderBottom: "1px solid #aaa", width: "62px" }}
-						defaultValue={this.props.value}
-					/>
-				)}
-			</div>
-		);
-	}
-}
-
-class ArraySource extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			source: this.props.Xaxis ? this.props.meta.source.x : this.props.meta.source.y[this.props.axis],
-			xAxisVisibility: Boolean(this.props.meta.xAxisVisibility),
-			label: this.props.meta.label[this.props.axis],
-			color: this.props.meta.color[this.props.axis],
-			width: this.props.meta.width[this.props.axis],
-			dash: this.props.meta.dash[this.props.axis],
-			size: this.props.meta.size[this.props.axis],
-			scale: this.props.meta.scale[this.props.axis],
-			offset: this.props.meta.offset[this.props.axis],
-			type: this.props.meta.type[this.props.axis],
-			visible: this.props.meta.visible[this.props.axis]
-		};
-	}
-	render() {
-		return (
-			<div>
-				<tt>
-					{this.props.Xaxis ? (
-						<span></span>
-					) : (
-						<div style={{ display: "flex", flexDirection: "row" }}>
-							<LabeledEditText
-								onChange={value => {
-									this.setState({ label: value });
-								}}
-								value={this.state.label}
-								title={"label"}
-							/>
-							<LabeledEditText
-								options={["bar", "line"]}
-								onChange={value => {
-									this.setState({ type: value });
-								}}
-								value={this.state.type}
-								title={"type"}
-								number
-							/>
-							<LabeledEditText
-								onChange={value => {
-									this.setState({ color: value });
-								}}
-								value={this.state.color}
-								title={"color"}
-							/>
-							<LabeledEditText
-								onChange={value => {
-									this.setState({ width: value });
-								}}
-								value={this.state.width}
-								title={"width"}
-								number
-							/>
-							<LabeledEditText
-								onChange={value => {
-									this.setState({ dash: value });
-								}}
-								value={this.state.dash}
-								title={"dash"}
-								number
-							/>
-							<LabeledEditText
-								onChange={value => {
-									this.setState({ size: value });
-								}}
-								value={this.state.size}
-								title={"size"}
-								number
-							/>
-							<LabeledEditText
-								onChange={value => {
-									this.setState({ scale: value });
-								}}
-								value={this.state.scale}
-								title={"scale"}
-								number
-							/>
-							<LabeledEditText
-								onChange={value => {
-									this.setState({ offset: value });
-								}}
-								value={this.state.offset}
-								title={"offset"}
-								number
-							/>
-							<LabeledEditText
-								options={["true", "false"]}
-								onChange={value => {
-									this.setState({ visible: value });
-								}}
-								value={this.state.visible}
-								title={"visiblity"}
-								
-							/>
-							
-						</div>
-					)}
-					{this.props.Xaxis && (
-						<span>
-							<input
-								type="checkbox"
-								checked={this.state.xAxisVisibility}
-								onChange={e => {
-									this.setState({ xAxisVisibility: e.target.checked });
-								}}
-							/>
-							X Axis Visibility
-						</span>
-					)}
-				</tt>
-				<textarea
-					defaultValue={this.state.source}
-					onChange={e => {
-						this.setState({ source: e.currentTarget.value });
-					}}
-					className="graphSourceEditor"
-				/>
-				<br />
-				<tt>
-					<span
-						onClick={() => {
-							try {
-								alert(JSON.stringify(new Function('data',this.state.source)(this.props.data)))
-								//alert(JSON.stringify(eval( `var data=${JSON.stringify(this.props.data)};${this.state.source}`)));
-								//console.log(eval( `var data=${JSON.stringify(this.props.data)};${this.state.source}`))
-							} catch (error) {
-								alert("Error: " + error.message);
-							}
-						}}
-						className="graphSourceButtons"
-						style={{
-							background: "lightgray"
-						}}
-					>
-						TEST
-					</span>
-					<span
-						onClick={() => {
-							this.props.updateAxis(
-								this.props.id,
-								this.props.Xaxis ? -1 : this.props.axis,
-								this.state.source,
-								this.state.xAxisVisibility,
-								this.state.label,
-								this.state.color,
-								this.state.width,
-								this.state.dash,
-								this.state.size,
-								this.state.scale,
-								this.state.offset,
-								this.state.type,
-								this.state.visible
-							);
-						}}
-						className="graphSourceButtons"
-						style={{
-							background: "lightgreen"
-						}}
-					>
-						SAVE
-					</span>
-					{(!this.props.Xaxis && this.props.meta.label.length>1) && (
-						<span
-							onClick={() => {
-								this.props.removeAxis(this.props.id, this.props.axis);
-							}}
-							className="graphSourceButtons"
-							style={{
-								background: "orange",
-								float: "right"
-							}}
-						>
-							DELETE
-						</span>
-					)}
-				</tt>
-				<br />
-				<br />
-			</div>
-		);
-	}
-}
+import ArraySource from "./ArraySource";
 
 class GraphSource extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
 	}
+
+	//https://stackoverflow.com/a/16348977/1970053
+	stringToColour = str => {
+		var hash = 0;
+		for (var i = 0; i < str.length; i++) {
+			hash = str.charCodeAt(i) + ((hash << 5) - hash);
+		}
+		var colour = "#";
+		for (var i = 0; i < 3; i++) {
+			var value = (hash >> (i * 8)) & 0xff;
+			colour += ("00" + value.toString(16)).substr(-2);
+		}
+		return colour;
+	};
+
 	render() {
-		let arraySources = [...Array(this.props.meta.source.y.length).keys()].map(axis => {
-			return <ArraySource {...this.props} axis={axis} />;
-		});
+		let arraySources = this.props.descriptor.y
+			? [...Array(this.props.descriptor.y.length).keys()].map(axis => {
+					return (
+						<ArraySource
+							axis={this.props.descriptor.y[axis]}
+							key={axis}
+							data={this.props.data}
+							index={axis}
+							noDelete={this.props.descriptor.y.length <= 1}
+							onDelete={index => {
+								let meta = this.props.descriptor;
+								meta.y.splice(index, 1);
+								this.props.onChange(meta);
+							}}
+							onChange={(axis, index) => {
+								let meta = this.props.descriptor;
+								meta.y[index] = axis;
+								this.props.onChange(meta);
+							}}
+						/>
+					);
+			  })
+			: [];
 		return (
-			<div className="graphSource">
+			<div
+				className="graphSource"
+				style={{
+					borderLeft: `6px solid ${this.props.color ? this.props.color : "#13949B"}`
+				}}
+			>
 				<div>
-				<div ><b>Data available:</b> {Object.keys(this.props.data).join(" ,")}</div>
+					{this.props.data && (
+						<span>
+							<small>Prop Data</small>
+							<br />
+							{Object.keys(this.props.data).map(key => (
+								<span
+									style={{ padding: "3px 5px", background: this.stringToColour(key) }}
+									className="graphSourceButtons"
+								>
+									{key}
+								</span>
+							))}
+						</span>
+					)}
 
 					<span className="graphControlButtons">
 						<i onClick={this.props.closeEditor} className="fas fa-times" />
@@ -248,14 +74,39 @@ class GraphSource extends Component {
 				</div>
 				<br />
 				<div>
-					<ArraySource {...this.props} Xaxis meta={this.props.meta} />
-					
+					<h2>X Axis</h2>
+					<ArraySource
+						Xaxis
+						data={this.props.data}
+						axis={this.props.descriptor.x}
+						onChange={(axis, _) => {
+							let meta = this.props.descriptor;
+							meta.x = axis;
+							this.props.onChange(meta);
+						}}
+					/>
+					<hr />
+					<h2>Y Axes ({arraySources.length})</h2>
 					{arraySources}
 				</div>
 				<div style={{ textAlign: "center" }}>
 					<span
 						onClick={() => {
-							this.props.addAxis(this.props.id);
+							let newAxis = {
+								source: `return [${[...Array(90).keys()].map(_ => Math.floor(Math.random() * 100))}];`,
+								label: `Y${new Date().getTime() % 10000}`,
+								color: "",
+								width: "2",
+								dash: "0",
+								size: "0",
+								scale: "1",
+								offset: "0",
+								type: "line",
+								visible: true
+							};
+							let meta = this.props.descriptor;
+							meta.y.push(newAxis);
+							this.props.onChange(meta);
 						}}
 						className="graphSourceButtons"
 						style={{

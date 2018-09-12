@@ -32,7 +32,7 @@ class GraphScroll extends Component {
 						display: "inline-flex",
 						transform: "rotate(180deg)",
 						margin: "0px 10px",
-						paddingTop: "2px"
+						paddingTop: "4px"
 					}}
 				>
 					<Range

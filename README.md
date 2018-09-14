@@ -61,7 +61,7 @@ Simply use the `data` prop to load data to chart. The `data` object will be avai
 
 * `readonly (optional)` - Self Explanatory
 * `color (optional)` - Sets the accent color for the chart
-* `descriptor` - The only required prop. meta expects an Object of the format 
+* `descriptor` - The only required prop. descriptor expects an Object of the format 
   
     	{
 		    x: {

@@ -104,7 +104,6 @@ class ArraySource extends Component {
 								value={this.state.dash}
 								key={"dash"}
 								title={"dash"}
-								number
 							/>
 							<LabeledEditText
 								onChange={value => {

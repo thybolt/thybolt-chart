@@ -33,7 +33,6 @@ class DataProp extends Component {
 					}}
 					descriptor={this.state.meta}
 					data={{
-						virrulean:{},
 						numbers: [
 							[1147651200000, 67.79],
 							[1147737600000, 64.98],

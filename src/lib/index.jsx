@@ -488,5 +488,4 @@ class ThyboltChart extends Component {
 	}
 }
 
-
 export default ThyboltChart;

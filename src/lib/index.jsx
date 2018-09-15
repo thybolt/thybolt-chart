@@ -52,7 +52,7 @@ class ThyboltChart extends Component {
 		this.setState({ data: this.props.data });
 		this.graphUpdated();
 		this.refreshInterval = setInterval(() => {
-			if ((this.props.data?Object.keys(this.props.data).length:-1) > 0) this.graphUpdated();
+			if ((this.props.data ? Object.keys(this.props.data).length : -1) > 0) this.graphUpdated();
 		}, 2000);
 	};
 
@@ -232,7 +232,7 @@ class ThyboltChart extends Component {
 		this.setState({ settingsVisible: false });
 		this.forceUpdate();
 		this.stale = true;
-	}
+	};
 
 	data = [];
 	charts = [];
@@ -257,7 +257,7 @@ class ThyboltChart extends Component {
 						i += 1;
 					});
 					this.labels.push(
-						<div key={this.props.descriptor.y[ch].label}>
+						<div style={{opacity:this.props.descriptor.y[ch].visible!==false?1.0:0.5}} key={this.props.descriptor.y[ch].label}>
 							<b style={{ whiteSpace: "nowrap" }}>
 								{this.props.descriptor.y[ch].label}
 								:&nbsp;
@@ -278,7 +278,9 @@ class ThyboltChart extends Component {
 					}
 					var color = this.props.descriptor.y[ch].color ? this.props.descriptor.y[ch].color : undefined;
 					if (this.state.legendHover != -1) {
-						if (this.state.legendHover != ch) color = "rgba(200,200,200,0.2)";
+						let actual_index = this.props.descriptor.y.filter(x => x.visible !== false);
+						if (actual_index[this.state.legendHover].label !== this.props.descriptor.y[ch].label)
+							color = "rgba(200,200,200,0.2)";
 					}
 
 					if (this.props.descriptor.y[ch].visible !== false && this.data[ch].length != 0) {
@@ -288,15 +290,11 @@ class ThyboltChart extends Component {
 									key={this.props.descriptor.y[ch].label}
 									strokeDasharray={this.props.descriptor.y[ch].dash}
 									strokeWidth={
-										(!isNaN(parseFloat(this.props.descriptor.y[ch].width)))
+										!isNaN(parseFloat(this.props.descriptor.y[ch].width))
 											? parseFloat(this.props.descriptor.y[ch].width)
 											: 2.0
 									}
-									size={
-										(this.props.descriptor.y[ch].size)
-											? (this.props.descriptor.y[ch].size)
-											: 0.0
-									}
+									size={this.props.descriptor.y[ch].size ? this.props.descriptor.y[ch].size : 0.0}
 									color={color}
 									animation={false}
 									getNull={d => d.y}
@@ -310,7 +308,7 @@ class ThyboltChart extends Component {
 									key={this.props.descriptor.y[ch].label}
 									strokeDasharray={this.props.descriptor.y[ch].dash}
 									strokeWidth={
-										(!isNaN(parseFloat(this.props.descriptor.y[ch].width)))
+										!isNaN(parseFloat(this.props.descriptor.y[ch].width))
 											? parseFloat(this.props.descriptor.y[ch].width)
 											: 2.0
 									}
@@ -333,13 +331,7 @@ class ThyboltChart extends Component {
 		try {
 			return (
 				<React.Fragment>
-					{this.state.settingsVisible && (
-						<GraphSource
-							{...this.props}
-							
-							closeEditor={this.closeEditor}
-						/>
-					)}
+					{this.state.settingsVisible && <GraphSource {...this.props} closeEditor={this.closeEditor} />}
 					<div className="graphControl">
 						{this.state.graphMode && (
 							<span>
@@ -417,7 +409,11 @@ class ThyboltChart extends Component {
 									height: "inherit"
 								}}
 							>
-								<FlexibleXYPlot onClick={this.closeEditor} onWheel={this.handleWheel} onMouseLeave={this.onMouseLeave}>
+								<FlexibleXYPlot
+									onClick={this.closeEditor}
+									onWheel={this.handleWheel}
+									onMouseLeave={this.onMouseLeave}
+								>
 									{this.props.descriptor.x.horizontalGrid !== false && <HorizontalGridLines />}
 									{this.props.descriptor.x.verticalGrid !== false && <VerticalGridLines />}
 									{this.props.descriptor.x.yAxisVisible !== false && <YAxis />}

@@ -10,7 +10,6 @@ class MultipleCharts extends Component {
 		return (
 			<React.Fragment>
 				<ThyboltChart
-					readonly
 					descriptor={{
 						x: {
 							source: "return [...Array(90).keys()]"

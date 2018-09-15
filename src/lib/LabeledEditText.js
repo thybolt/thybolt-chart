@@ -19,6 +19,7 @@ class LabeledEditText extends Component {
 				{this.props.options ? (
 					<select
 						value={this.props.value}
+						style={{background:'transparent'}}
 						onChange={e => {
 							this.props.onChange(e.target.value);
 						}}
@@ -33,7 +34,7 @@ class LabeledEditText extends Component {
 						onChange={e => {
 							this.props.onChange(e.target.value);
 						}}
-						style={{ fontSize: "11px", border: "none", borderBottom: "1px solid #aaa", width: "62px" }}
+						style={{ fontSize: "11px", border: "none", borderBottom: "1px solid #aaa", width: "62px",background:'transparent' }}
 						defaultValue={this.props.value}
 					/>
 				)}

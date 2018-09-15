@@ -5,47 +5,48 @@ class ArraySource extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			...this.props.axis
+			...this.props.axis,
+			unsaved: false
 		};
 	}
 
 	render() {
 		return (
-			<div>
+			<div style={{ background: this.state.visible === false ? "#ddd" : "transparent" }}>
 				<tt>
 					{this.props.Xaxis ? (
 						<div style={{ display: "flex", flexDirection: "row" }}>
 							<LabeledEditText
-                                options={[true, false]}
+								options={[true, false]}
 								onChange={value => {
-									this.setState({ xAxisVisible: JSON.parse(value) });
+									this.setState({ xAxisVisible: JSON.parse(value), unsaved: true });
 								}}
 								value={this.state.xAxisVisible}
 								key={"xAxisVisible"}
 								title={"xAxisVisible"}
 							/>
-                            <LabeledEditText
-                                options={[true, false]}
+							<LabeledEditText
+								options={[true, false]}
 								onChange={value => {
-									this.setState({ yAxisVisible: JSON.parse(value) });
+									this.setState({ yAxisVisible: JSON.parse(value), unsaved: true });
 								}}
 								value={this.state.yAxisVisible}
 								key={"yAxisVisible"}
 								title={"yAxisVisible"}
 							/>
-                            <LabeledEditText
-                                options={[true, false]}
+							<LabeledEditText
+								options={[true, false]}
 								onChange={value => {
-									this.setState({ horizontalGrid: JSON.parse(value) });
+									this.setState({ horizontalGrid: JSON.parse(value), unsaved: true });
 								}}
 								value={this.state.horizontalGrid}
 								key={"horizontalGrid"}
 								title={"horizontalGrid"}
 							/>
-                            <LabeledEditText
-                                options={[true, false]}
+							<LabeledEditText
+								options={[true, false]}
 								onChange={value => {
-									this.setState({ verticalGrid: JSON.parse(value) });
+									this.setState({ verticalGrid: JSON.parse(value), unsaved: true });
 								}}
 								value={this.state.verticalGrid}
 								key={"verticalGrid"}
@@ -53,7 +54,7 @@ class ArraySource extends Component {
 							/>
 							<LabeledEditText
 								onChange={value => {
-									this.setState({ tickAngle: value });
+									this.setState({ tickAngle: value, unsaved: true });
 								}}
 								value={this.state.tickAngle}
 								key={"tickAngle"}
@@ -62,19 +63,19 @@ class ArraySource extends Component {
 							/>
 						</div>
 					) : (
-						<div style={{ display: "flex", flexDirection: "row" }}>
+						<div style={{ display: "flex", flexDirection: "row",width:`25%` }}>
 							<LabeledEditText
 								onChange={value => {
-									this.setState({ label: value });
+									this.setState({ label: value, unsaved: true });
 								}}
 								value={this.state.label}
 								key={"label"}
 								title={"label"}
 							/>
 							<LabeledEditText
-								options={[ "line","bar"]}
+								options={["line", "bar"]}
 								onChange={value => {
-									this.setState({ type: value });
+									this.setState({ type: value, unsaved: true });
 								}}
 								value={this.state.type}
 								key={"type"}
@@ -82,7 +83,7 @@ class ArraySource extends Component {
 							/>
 							<LabeledEditText
 								onChange={value => {
-									this.setState({ color: value });
+									this.setState({ color: value, unsaved: true });
 								}}
 								value={this.state.color}
 								key={"color"}
@@ -90,7 +91,7 @@ class ArraySource extends Component {
 							/>
 							<LabeledEditText
 								onChange={value => {
-									this.setState({ width: value });
+									this.setState({ width: value, unsaved: true });
 								}}
 								value={this.state.width}
 								key={"width"}
@@ -99,7 +100,7 @@ class ArraySource extends Component {
 							/>
 							<LabeledEditText
 								onChange={value => {
-									this.setState({ dash: value });
+									this.setState({ dash: value, unsaved: true });
 								}}
 								value={this.state.dash}
 								key={"dash"}
@@ -107,7 +108,7 @@ class ArraySource extends Component {
 							/>
 							<LabeledEditText
 								onChange={value => {
-									this.setState({ size: value });
+									this.setState({ size: value, unsaved: true });
 								}}
 								value={this.state.size}
 								key={"size"}
@@ -116,7 +117,7 @@ class ArraySource extends Component {
 							/>
 							<LabeledEditText
 								onChange={value => {
-									this.setState({ scale: value });
+									this.setState({ scale: value, unsaved: true });
 								}}
 								value={this.state.scale}
 								key={"scale"}
@@ -125,7 +126,7 @@ class ArraySource extends Component {
 							/>
 							<LabeledEditText
 								onChange={value => {
-									this.setState({ offset: value });
+									this.setState({ offset: value, unsaved: true });
 								}}
 								value={this.state.offset}
 								key={"offset"}
@@ -135,7 +136,7 @@ class ArraySource extends Component {
 							<LabeledEditText
 								options={[true, false]}
 								onChange={value => {
-									this.setState({ visible: JSON.parse(value) });
+									this.setState({ visible: JSON.parse(value), unsaved: true });
 								}}
 								value={this.state.visible}
 								key={"visible"}
@@ -145,9 +146,10 @@ class ArraySource extends Component {
 					)}
 				</tt>
 				<textarea
+					style={{ background: "transparent" }}
 					defaultValue={this.state.source}
 					onChange={e => {
-						this.setState({ source: e.currentTarget.value });
+						this.setState({ source: e.currentTarget.value, unsaved: true });
 					}}
 					className="graphSourceEditor"
 				/>
@@ -156,9 +158,12 @@ class ArraySource extends Component {
 					<span
 						onClick={() => {
 							try {
-								alert(JSON.stringify(new Function("data", this.state.source)(this.props.data)));
+								let clout = new Function("data", this.state.source)(this.props.data);
+								alert(JSON.stringify(clout));
+								console.log(clout);
 							} catch (error) {
 								alert("Error: " + error.message);
+								console.log(error);
 							}
 						}}
 						className="graphSourceButtons"
@@ -170,7 +175,9 @@ class ArraySource extends Component {
 					</span>
 					<span
 						onClick={() => {
+							this.setState({ unsaved: false });
 							this.props.onChange(this.state, this.props.index);
+							
 						}}
 						className="graphSourceButtons"
 						style={{
@@ -178,6 +185,7 @@ class ArraySource extends Component {
 						}}
 					>
 						SAVE
+						{this.state.unsaved ? "*" : ""}
 					</span>
 					{!this.props.Xaxis &&
 						!this.props.noDelete && (

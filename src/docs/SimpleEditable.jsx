@@ -33,7 +33,6 @@ class SimpleEditable extends Component {
 					noButtonControl
 					noLegends
 					initalGraphWindow={1.0}
-					readonly
 					onChange={meta => {
 						this.setState({ meta: meta });
 					}}

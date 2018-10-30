@@ -28,6 +28,12 @@ class SimpleEditable extends Component {
 		return (
 			<React.Fragment>
 				<ThyboltChart
+					noScrollBar
+					noTable
+					noButtonControl
+					noLegends
+					initalGraphWindow={1.0}
+					readonly
 					onChange={meta => {
 						this.setState({ meta: meta });
 					}}

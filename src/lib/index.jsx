@@ -13,7 +13,6 @@ import {
 import ReactTable from "react-table";
 import GraphScroll from "./GraphScroll";
 import { BarLoader } from "react-spinners";
-import "react-table/react-table.css";
 import "./Graph.css";
 import "react-vis/dist/style.css";
 import GraphSource from "./GraphSource";
@@ -50,14 +49,18 @@ class ThyboltChart extends Component {
 	}
 	componentDidMount = () => {
 		this.setState({ data: this.props.data });
+		if (this.props.initalGraphWindow) this.DEFAULT_NVALUES = parseFloat(this.props.initalGraphWindow);
+		else this.DEFAULT_NVALUES = 0.1;
 		this.graphUpdated();
-		this.refreshInterval = setInterval(() => {
-			if ((this.props.data ? Object.keys(this.props.data).length : -1) > 0) this.graphUpdated();
-		}, 2000);
+		if (this.props.data)
+			this.refreshInterval = setInterval(() => {
+				if ((this.props.data ? Object.keys(this.props.data).length : -1) > 0) this.graphUpdated();
+			}, 2000);
 	};
 
 	componentWillReceiveProps = nextprops => {
 		this.setState({ data: nextprops.data });
+		this.graphUpdated();
 	};
 
 	componentWillUnmount() {
@@ -164,6 +167,9 @@ class ThyboltChart extends Component {
 		if (totalSize > 2 && nvalues < 1.0) {
 			this.setState({ nvalues });
 			this.stale = true;
+		} else if (nvalues > 1.0) {
+			this.setState({ nvalues: 1.0 });
+			this.stale = true;
 		}
 	};
 
@@ -257,7 +263,10 @@ class ThyboltChart extends Component {
 						i += 1;
 					});
 					this.labels.push(
-						<div style={{opacity:this.props.descriptor.y[ch].visible!==false?1.0:0.5}} key={this.props.descriptor.y[ch].label}>
+						<div
+							style={{ opacity: this.props.descriptor.y[ch].visible !== false ? 1.0 : 0.5 }}
+							key={this.props.descriptor.y[ch].label}
+						>
 							<b style={{ whiteSpace: "nowrap" }}>
 								{this.props.descriptor.y[ch].label}
 								:&nbsp;
@@ -333,64 +342,72 @@ class ThyboltChart extends Component {
 				<React.Fragment>
 					{this.state.settingsVisible && <GraphSource {...this.props} closeEditor={this.closeEditor} />}
 					<div className="graphControl">
-						{this.state.graphMode && (
-							<span>
-								<span style={{ opacity: this.data[0].length === 0 ? 0.0 : 1.0 }}>
-									<GraphScroll
-										max={this.state.xydata[0].length}
-										seek={this.state.translationOffset}
-										window={this.data[0].length}
-										color={this.props.color ? this.props.color : "#13949B"}
-									/>
-								</span>
+						{this.props.noScrollBar ||
+							(this.state.graphMode && (
+								<span>
+									<span style={{ opacity: this.data[0].length === 0 ? 0.0 : 1.0 }}>
+										<GraphScroll
+											max={this.state.xydata[0].length}
+											seek={this.state.translationOffset}
+											window={this.data[0].length}
+											color={this.props.color ? this.props.color : "#13949B"}
+										/>
+									</span>
 
-								{/* <span style={{ display: data.length === 0 ? "none" : "inline" }} className="graphDays">{`${daySpan + 1} Days`}</span> */}
+									{/* <span style={{ display: data.length === 0 ? "none" : "inline" }} className="graphDays">{`${daySpan + 1} Days`}</span> */}
+								</span>
+							))}
+						{!this.props.noTable && (
+							<span onClick={this.toggleChart} className="graphControlButtons">
+								{this.state.graphMode ? (
+									<i className="fas fa-table" />
+								) : (
+									<i className="fas fa-chart-area" />
+								)}
 							</span>
 						)}
-						<span onClick={this.toggleChart} className="graphControlButtons">
-							{this.state.graphMode ? (
-								<i className="fas fa-table" />
-							) : (
-								<i className="fas fa-chart-area" />
-							)}
-						</span>
 						{!this.props.readonly && (
 							<span onClick={this.showSettings} className="graphControlButtons">
 								{<i className="fas fa-wrench" />}
 							</span>
 						)}
-						<span onClick={this.resetScales} className="graphControlButtons">
-							{this.state.graphMode ? <i className="fas fa-redo" /> : ""}
-						</span>
-						&nbsp;
-						<span
-							style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
-							onClick={this.seekRight}
-							className="graphControlButtons"
-						>
-							{this.state.graphMode ? <i className="fas fa-chevron-right" /> : ""}
-						</span>
-						<span
-							style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
-							onClick={this.zoomIn}
-							className="graphControlButtons"
-						>
-							{this.state.graphMode ? <i className="fas fa-search-plus" /> : ""}
-						</span>
-						<span
-							style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
-							onClick={this.zoomOut}
-							className="graphControlButtons"
-						>
-							{this.state.graphMode ? <i className="fas fa-search-minus" /> : ""}
-						</span>
-						<span
-							style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
-							onClick={this.seekLeft}
-							className="graphControlButtons"
-						>
-							{this.state.graphMode ? <i className="fas fa-chevron-left" /> : ""}
-						</span>
+
+						{!this.props.noButtonControl && (
+							<span>
+								<span onClick={this.resetScales} className="graphControlButtons">
+									{this.state.graphMode ? <i className="fas fa-redo" /> : ""}
+								</span>
+								&nbsp;
+								<span
+									style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
+									onClick={this.seekRight}
+									className="graphControlButtons"
+								>
+									{this.state.graphMode ? <i className="fas fa-chevron-right" /> : ""}
+								</span>
+								<span
+									style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
+									onClick={this.zoomIn}
+									className="graphControlButtons"
+								>
+									{this.state.graphMode ? <i className="fas fa-search-plus" /> : ""}
+								</span>
+								<span
+									style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
+									onClick={this.zoomOut}
+									className="graphControlButtons"
+								>
+									{this.state.graphMode ? <i className="fas fa-search-minus" /> : ""}
+								</span>
+								<span
+									style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
+									onClick={this.seekLeft}
+									className="graphControlButtons"
+								>
+									{this.state.graphMode ? <i className="fas fa-chevron-left" /> : ""}
+								</span>
+							</span>
+						)}
 					</div>
 					<div className="graph">
 						<span className="graphSpinner">
@@ -444,23 +461,24 @@ class ThyboltChart extends Component {
 										</div>
 									</Crosshair>
 								</FlexibleXYPlot>
-
-								<DiscreteColorLegend
-									height={60}
-									orientation="horizontal"
-									onItemMouseEnter={(item, index, event) => {
-										this.setState({ legendHover: index });
-										this.stale = true;
-									}}
-									onItemMouseLeave={(item, index, event) => {
-										this.setState({ legendHover: -1 });
-										this.stale = true;
-									}}
-									items={this.props.descriptor.y.filter(y => y.visible !== false).map(y => {
-										if (!y.color) return { title: y.label };
-										else return { title: y.label, color: y.color };
-									})}
-								/>
+								{!this.props.noLegends && (
+									<DiscreteColorLegend
+										height={60}
+										orientation="horizontal"
+										onItemMouseEnter={(item, index, event) => {
+											this.setState({ legendHover: index });
+											this.stale = true;
+										}}
+										onItemMouseLeave={(item, index, event) => {
+											this.setState({ legendHover: -1 });
+											this.stale = true;
+										}}
+										items={this.props.descriptor.y.filter(y => y.visible !== false).map(y => {
+											if (!y.color) return { title: y.label };
+											else return { title: y.label, color: y.color };
+										})}
+									/>
+								)}
 							</div>
 						) : (
 							<ReactTable

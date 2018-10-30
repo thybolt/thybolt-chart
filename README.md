@@ -28,11 +28,15 @@ Add Font-Awesome 5 to your index.html headers to render icons
     
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" >
 
+Also add react-table.css for proper rendering of tables
+
+	import "react-table/react-table.css";
+
 import to your react js file by
 
     import ThyboltChart from "thybolt-chart";
 
-add the following code to your render 
+and add
 
     <ThyboltChart
 	    readonly
@@ -118,6 +122,11 @@ Simply use the `data` prop to load data to chart. The `data` object will be avai
 * `onChange(descriptor)` - returns the updated copy of the descriptor once changes are made in the UI Editor. Descriptor object can then be saved to a persistent storage.
 
 * `data` - Prop to load external data. This object will be available inside plot source and can be referred to as data. The keys within this object will be listed in settings page for reference. 
+*  `noScrollBar` - Do not show scrollbars
+*  `noTable` - Do not show table button
+*  `noButtonControl` - Do not show control buttons. Keyboard controls will work however. 
+*  `noLegends` - Do not show legends
+*  `initalGraphWindow` - The fraction of chart to be shown when loaded first time
 
 ## Used By
 

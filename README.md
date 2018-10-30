@@ -63,7 +63,7 @@ Simply use the `data` prop to load data to chart. The `data` object will be avai
 
 ## Props
 
-* `readonly (optional)` - Self Explanatory
+* `readonly (optional)` - Disables edit menu
 * `color (optional)` - Sets the accent color for the chart
 * `descriptor` - The only required prop. descriptor expects an Object of the format 
   

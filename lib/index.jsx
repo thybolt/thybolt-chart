@@ -13,7 +13,6 @@ import {
 import ReactTable from "react-table";
 import GraphScroll from "./GraphScroll";
 import { BarLoader } from "react-spinners";
-import "react-table/react-table.css";
 import "./Graph.css";
 import "react-vis/dist/style.css";
 import GraphSource from "./GraphSource";
@@ -50,6 +49,8 @@ class ThyboltChart extends Component {
 	}
 	componentDidMount = () => {
 		this.setState({ data: this.props.data });
+		if (this.props.initalGraphWindow) this.DEFAULT_NVALUES = parseFloat(this.props.initalGraphWindow);
+		else this.DEFAULT_NVALUES = 0.1;
 		this.graphUpdated();
 		if (this.props.data)
 			this.refreshInterval = setInterval(() => {
@@ -108,7 +109,7 @@ class ThyboltChart extends Component {
 						//The actual x will only be used for tickvalues
 						this._xydata[i].unshift({
 							xv: _tempx[j],
-							x0: j + parseFloat(this.props.descriptor.y[i].width) * 0.01,
+							x0: j + parseFloat(this.props.descriptor.y[i].width?this.props.descriptor.y[i].width:0.0) * 0.01,
 							x: j,
 							y: value
 						});
@@ -122,7 +123,7 @@ class ThyboltChart extends Component {
 
 				this.setState({ xydata: this._xydata, xydataUnscaled: this._xydataUnscaled });
 			} catch (error) {
-				console.log(error);
+				//console.log(error);
 			}
 		} else {
 			this.setState({ xydata: this.props.xydata });
@@ -341,8 +342,8 @@ class ThyboltChart extends Component {
 				<React.Fragment>
 					{this.state.settingsVisible && <GraphSource {...this.props} closeEditor={this.closeEditor} />}
 					<div className="graphControl">
-						{!this.props.noScrollBar || this.state.graphMode
-							&& (
+						{this.props.noScrollBar ||
+							(this.state.graphMode && (
 								<span>
 									<span style={{ opacity: this.data[0].length === 0 ? 0.0 : 1.0 }}>
 										<GraphScroll
@@ -356,54 +357,62 @@ class ThyboltChart extends Component {
 									{/* <span style={{ display: data.length === 0 ? "none" : "inline" }} className="graphDays">{`${daySpan + 1} Days`}</span> */}
 								</span>
 							))}
-						<span onClick={this.toggleChart} className="graphControlButtons">
-							{this.state.graphMode ? (
-								<i className="fas fa-table" />
-							) : (
-								<i className="fas fa-chart-area" />
-							)}
-						</span>
+						{!this.props.noTable && (
+							<span onClick={this.toggleChart} className="graphControlButtons">
+								{this.state.graphMode ? (
+									<i className="fas fa-table" />
+								) : (
+									<i className="fas fa-chart-area" />
+								)}
+							</span>
+						)}
 						{!this.props.readonly && (
 							<span onClick={this.showSettings} className="graphControlButtons">
 								{<i className="fas fa-wrench" />}
 							</span>
 						)}
-						<span onClick={this.resetScales} className="graphControlButtons">
-							{this.state.graphMode ? <i className="fas fa-redo" /> : ""}
-						</span>
-						&nbsp;
-						<span
-							style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
-							onClick={this.seekRight}
-							className="graphControlButtons"
-						>
-							{this.state.graphMode ? <i className="fas fa-chevron-right" /> : ""}
-						</span>
-						<span
-							style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
-							onClick={this.zoomIn}
-							className="graphControlButtons"
-						>
-							{this.state.graphMode ? <i className="fas fa-search-plus" /> : ""}
-						</span>
-						<span
-							style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
-							onClick={this.zoomOut}
-							className="graphControlButtons"
-						>
-							{this.state.graphMode ? <i className="fas fa-search-minus" /> : ""}
-						</span>
-						<span
-							style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
-							onClick={this.seekLeft}
-							className="graphControlButtons"
-						>
-							{this.state.graphMode ? <i className="fas fa-chevron-left" /> : ""}
-						</span>
+
+						{!this.props.noButtonControl && (
+							<span>
+								<span onClick={this.resetScales} className="graphControlButtons">
+									{this.state.graphMode ? <i className="fas fa-redo" /> : ""}
+								</span>
+								&nbsp;
+								<span
+									style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
+									onClick={this.seekRight}
+									className="graphControlButtons"
+								>
+									{this.state.graphMode ? <i className="fas fa-chevron-right" /> : ""}
+								</span>
+								<span
+									style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
+									onClick={this.zoomIn}
+									className="graphControlButtons"
+								>
+									{this.state.graphMode ? <i className="fas fa-search-plus" /> : ""}
+								</span>
+								<span
+									style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
+									onClick={this.zoomOut}
+									className="graphControlButtons"
+								>
+									{this.state.graphMode ? <i className="fas fa-search-minus" /> : ""}
+								</span>
+								<span
+									style={{ display: this.data[0].length === 0 ? "none" : "inline" }}
+									onClick={this.seekLeft}
+									className="graphControlButtons"
+								>
+									{this.state.graphMode ? <i className="fas fa-chevron-left" /> : ""}
+								</span>
+							</span>
+						)}
 					</div>
 					<div className="graph">
 						<span className="graphSpinner">
 							<BarLoader
+								height=1
 								loading={this.data[0].length === 0 && this.state.graphMode}
 								color={this.props.color ? this.props.color : "#13949B"}
 							/>
@@ -453,23 +462,24 @@ class ThyboltChart extends Component {
 										</div>
 									</Crosshair>
 								</FlexibleXYPlot>
-
-								<DiscreteColorLegend
-									height={60}
-									orientation="horizontal"
-									onItemMouseEnter={(item, index, event) => {
-										this.setState({ legendHover: index });
-										this.stale = true;
-									}}
-									onItemMouseLeave={(item, index, event) => {
-										this.setState({ legendHover: -1 });
-										this.stale = true;
-									}}
-									items={this.props.descriptor.y.filter(y => y.visible !== false).map(y => {
-										if (!y.color) return { title: y.label };
-										else return { title: y.label, color: y.color };
-									})}
-								/>
+								{!this.props.noLegends && (
+									<DiscreteColorLegend
+										height={60}
+										orientation="horizontal"
+										onItemMouseEnter={(item, index, event) => {
+											this.setState({ legendHover: index });
+											this.stale = true;
+										}}
+										onItemMouseLeave={(item, index, event) => {
+											this.setState({ legendHover: -1 });
+											this.stale = true;
+										}}
+										items={this.props.descriptor.y.filter(y => y.visible !== false).map(y => {
+											if (!y.color) return { title: y.label };
+											else return { title: y.label, color: y.color };
+										})}
+									/>
+								)}
 							</div>
 						) : (
 							<ReactTable

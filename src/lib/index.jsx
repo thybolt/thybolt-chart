@@ -109,7 +109,7 @@ class ThyboltChart extends Component {
 						//The actual x will only be used for tickvalues
 						this._xydata[i].unshift({
 							xv: _tempx[j],
-							x0: j + parseFloat(this.props.descriptor.y[i].width) * 0.01,
+							x0: j + parseFloat(this.props.descriptor.y[i].width?this.props.descriptor.y[i].width:0.0) * 0.01,
 							x: j,
 							y: value
 						});
@@ -123,7 +123,7 @@ class ThyboltChart extends Component {
 
 				this.setState({ xydata: this._xydata, xydataUnscaled: this._xydataUnscaled });
 			} catch (error) {
-				console.log(error);
+				//console.log(error);
 			}
 		} else {
 			this.setState({ xydata: this.props.xydata });
@@ -412,6 +412,7 @@ class ThyboltChart extends Component {
 					<div className="graph">
 						<span className="graphSpinner">
 							<BarLoader
+								height={1}
 								loading={this.data[0].length === 0 && this.state.graphMode}
 								color={this.props.color ? this.props.color : "#13949B"}
 							/>

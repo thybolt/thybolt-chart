@@ -1,6 +1,6 @@
 {
   "name": "thybolt-chart",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Wrappers over react-vis for building visualization tools effortlessly",
   "main": "lib/index.js",
   "scripts": {

@@ -49,7 +49,7 @@ class ThyboltChart extends Component {
 	}
 	componentDidMount = () => {
 		this.setState({ data: this.props.data });
-		if (this.props.initalGraphWindow) this.DEFAULT_NVALUES = parseFloat(this.props.initalGraphWindow);
+		if (this.props.initalGraphWindow) this.DEFAULT_NVALUES = parseFloat(this.props.initalGraphWindow?this.props.initalGraphWindow:0.0);
 		else this.DEFAULT_NVALUES = 0.1;
 		this.graphUpdated();
 		if (this.props.data)
@@ -84,16 +84,18 @@ class ThyboltChart extends Component {
 				for (let i = 0; i < this.props.descriptor.y.length; i++) {
 					this._xydata.push([]);
 					this._xydataUnscaled.push([]);
-					let scale = parseFloat(this.props.descriptor.y[i].scale);
+					let scale = parseFloat(this.props.descriptor.y[i].scale?this.props.descriptor.y[i].scale:0.0);
 					scale = scale ? scale : 1.0;
-					let offset = parseFloat(this.props.descriptor.y[i].offset);
+					let offset = parseFloat(this.props.descriptor.y[i].offset?this.props.descriptor.y[i].offset:0.0);
 					offset = offset ? offset : 0.0;
 					for (let j = 0; j < _tempx.length; j++) {
 						// Y = a * X + B
-						let value = _tempy[i][j] * scale + offset;
-						let valueUnscaled = _tempy[i][j];
+						let _value = parseFloat(_tempy[i][j] * scale + offset)
+						let value = _value?_value:null;
+						let _valueUnscaled = parseFloat(_tempy[i][j]);
+						let valueUnscaled =_valueUnscaled?_valueUnscaled:null;
 
-						if (!value) value = _tempy[i][j];
+						
 						// this._xydata[i].unshift({
 						// 	index:j,
 						// 	x0: _tempx[j] + parseFloat(this.props.descriptor.y[i].width) * 0.01,
@@ -108,13 +110,13 @@ class ThyboltChart extends Component {
 						//We're going to use the index as a pseudo X
 						//The actual x will only be used for tickvalues
 						this._xydata[i].unshift({
-							xv: _tempx[j],
-							x0: j + parseFloat(this.props.descriptor.y[i].width?this.props.descriptor.y[i].width:0.0) * 0.01,
+							xv: parseFloat( _tempx[j])? parseFloat( _tempx[j]):0.0,
+							x0: j + (parseFloat(this.props.descriptor.y[i].width?this.props.descriptor.y[i].width:0.0)?parseFloat(this.props.descriptor.y[i].width?this.props.descriptor.y[i].width:0.0):0.0) * 0.01,
 							x: j,
 							y: value
 						});
 						this._xydataUnscaled[i].unshift({
-							xv: _tempx[j],
+							xv: parseFloat(_tempx[j])?parseFloat(_tempx[j]):0.0,
 							x: j,
 							y: valueUnscaled
 						});

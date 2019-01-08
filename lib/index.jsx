@@ -49,7 +49,7 @@ class ThyboltChart extends Component {
 	}
 	componentDidMount = () => {
 		this.setState({ data: this.props.data });
-		if (this.props.initalGraphWindow) this.DEFAULT_NVALUES = parseFloat(this.props.initalGraphWindow);
+		if (this.props.initalGraphWindow) this.DEFAULT_NVALUES = parseFloat(this.props.initalGraphWindow?this.props.initalGraphWindow:0.0);
 		else this.DEFAULT_NVALUES = 0.1;
 		this.graphUpdated();
 		if (this.props.data)
@@ -84,9 +84,9 @@ class ThyboltChart extends Component {
 				for (let i = 0; i < this.props.descriptor.y.length; i++) {
 					this._xydata.push([]);
 					this._xydataUnscaled.push([]);
-					let scale = parseFloat(this.props.descriptor.y[i].scale);
+					let scale = parseFloat(this.props.descriptor.y[i].scale?this.props.descriptor.y[i].scale:0.0);
 					scale = scale ? scale : 1.0;
-					let offset = parseFloat(this.props.descriptor.y[i].offset);
+					let offset = parseFloat(this.props.descriptor.y[i].offset?this.props.descriptor.y[i].offset:0.0);
 					offset = offset ? offset : 0.0;
 					for (let j = 0; j < _tempx.length; j++) {
 						// Y = a * X + B
